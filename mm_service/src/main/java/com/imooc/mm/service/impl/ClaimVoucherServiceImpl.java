@@ -1,94 +1,96 @@
 package com.imooc.mm.service.impl;
 
-import com.imooc.mm.service.ClaimVoucherService;
-import com.imooc.mm.dao.ClaimVoucherDao;
-import com.imooc.mm.dao.ClaimVoucherItemDao;
-import com.imooc.mm.dao.DealRecordDao;
-import com.imooc.mm.dao.EmployeeDao;
+import com.imooc.mm.dao.ClaimVoucherMapper;
+import com.imooc.mm.dao.ClaimVoucherItemMapper;
+import com.imooc.mm.dao.DealRecordMapper;
+import com.imooc.mm.dao.EmployeeMapper;
 import com.imooc.mm.entity.ClaimVoucher;
 import com.imooc.mm.entity.ClaimVoucherItem;
 import com.imooc.mm.entity.DealRecord;
 import com.imooc.mm.entity.Employee;
 import com.imooc.mm.global.Contant;
+import com.imooc.mm.service.ClaimVoucherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-@Service("claimVoucherService")
+import java.util.Objects;
+
+@Service
 public class ClaimVoucherServiceImpl implements ClaimVoucherService {
     @Autowired
-    private ClaimVoucherDao claimVoucherDao;
+    private ClaimVoucherMapper claimVoucherMapper;
     @Autowired
-    private ClaimVoucherItemDao claimVoucherItemDao;
+    private ClaimVoucherItemMapper claimVoucherItemMapper;
     @Autowired
-    private DealRecordDao dealRecordDao;
+    private DealRecordMapper dealRecordMapper;
     @Autowired
-    private EmployeeDao employeeDao;
+    private EmployeeMapper employeeMapper;
 
     @Override
-    public void save(ClaimVoucher claimVoucher, List<ClaimVoucherItem> items) {
+    public void save(ClaimVoucher claimVoucher, List <ClaimVoucherItem> items) {
         claimVoucher.setCreateTime(new Date());
         claimVoucher.setNextDealSn(claimVoucher.getCreateSn());
         claimVoucher.setStatus(Contant.CLAIMVOUCHER_CREATED);
-        claimVoucherDao.insert(claimVoucher);
+        claimVoucherMapper.insert(claimVoucher);
 
-        for(ClaimVoucherItem item:items){
+        for (ClaimVoucherItem item : items) {
             item.setClaimVoucherId(claimVoucher.getId());
-            claimVoucherItemDao.insert(item);
+            claimVoucherItemMapper.insert(item);
         }
     }
 
     @Override
     public ClaimVoucher get(int id) {
-        return claimVoucherDao.select(id);
+        return claimVoucherMapper.selectById(id);
     }
 
     @Override
-    public List<ClaimVoucherItem> getItems(int cvid) {
-        return claimVoucherItemDao.selectByClaimVoucher(cvid);
+    public List <ClaimVoucherItem> getItems(int cvid) {
+        return claimVoucherItemMapper.selectByClaimVoucher(cvid);
     }
 
     @Override
-    public List<DealRecord> getRecords(int cvid) {
-        return dealRecordDao.selectByClaimVoucher(cvid);
+    public List <DealRecord> getRecords(int cvid) {
+        return dealRecordMapper.selectByClaimVoucher(cvid);
     }
 
     @Override
-    public List<ClaimVoucher> getForSelf(String sn) {
-        return claimVoucherDao.selectByCreateSn(sn);
+    public List <ClaimVoucher> getForSelf(String sn) {
+        return claimVoucherMapper.selectByCreateSn(sn);
     }
 
     @Override
-    public List<ClaimVoucher> getForDeal(String sn) {
-        return claimVoucherDao.selectByNextDealSn(sn);
+    public List <ClaimVoucher> getForDeal(String sn) {
+        return claimVoucherMapper.selectByNextDealSn(sn);
     }
 
     @Override
-    public void update(ClaimVoucher claimVoucher, List<ClaimVoucherItem> items) {
+    public void update(ClaimVoucher claimVoucher, List <ClaimVoucherItem> items) {
         claimVoucher.setNextDealSn(claimVoucher.getCreateSn());
         claimVoucher.setStatus(Contant.CLAIMVOUCHER_CREATED);
-        claimVoucherDao.update(claimVoucher);
+        claimVoucherMapper.update(claimVoucher);
 
-        List<ClaimVoucherItem> olds = claimVoucherItemDao.selectByClaimVoucher(claimVoucher.getId());
-        for(ClaimVoucherItem old:olds){
-            boolean isHave=false;
-            for(ClaimVoucherItem item:items){
-                if(item.getId().equals(old.getId())){
-                    isHave=true;
+        List <ClaimVoucherItem> olds = claimVoucherItemMapper.selectByClaimVoucher(claimVoucher.getId());
+        for (ClaimVoucherItem old : olds) {
+            boolean isHave = false;
+            for (ClaimVoucherItem item : items) {
+                if (item.getId().equals(old.getId())) {
+                    isHave = true;
                     break;
                 }
             }
-            if(!isHave){
-                claimVoucherItemDao.delete(old.getId());
+            if (!isHave) {
+                claimVoucherItemMapper.deleteById(old.getId());
             }
         }
-        for(ClaimVoucherItem item:items){
+        for (ClaimVoucherItem item : items) {
             item.setClaimVoucherId(claimVoucher.getId());
-            if(item.getId()>0){
-                claimVoucherItemDao.update(item);
-            }else{
-                claimVoucherItemDao.insert(item);
+            if (Objects.nonNull(item.getId()) && item.getId() > 0) {
+                claimVoucherItemMapper.updateById(item);
+            } else {
+                claimVoucherItemMapper.insert(item);
             }
         }
 
@@ -96,12 +98,12 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService {
 
     @Override
     public void submit(int id) {
-        ClaimVoucher claimVoucher = claimVoucherDao.select(id);
-        Employee employee = employeeDao.select(claimVoucher.getCreateSn());
+        ClaimVoucher claimVoucher = claimVoucherMapper.selectById(id);
+        Employee employee = employeeMapper.select(claimVoucher.getCreateSn());
 
         claimVoucher.setStatus(Contant.CLAIMVOUCHER_SUBMIT);
-        claimVoucher.setNextDealSn(employeeDao.selectByDepartmentAndPost(employee.getDepartmentSn(),Contant.POST_FM).get(0).getSn());
-        claimVoucherDao.update(claimVoucher);
+        claimVoucher.setNextDealSn(employeeMapper.selectByDepartmentAndPost(employee.getDepartmentSn(), employee.getPost()).get(0).getSn());
+        claimVoucherMapper.update(claimVoucher);
 
         DealRecord dealRecord = new DealRecord();
         dealRecord.setDealWay(Contant.DEAL_SUBMIT);
@@ -110,46 +112,45 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService {
         dealRecord.setDealResult(Contant.CLAIMVOUCHER_SUBMIT);
         dealRecord.setDealTime(new Date());
         dealRecord.setComment("无");
-        dealRecordDao.insert(dealRecord);
+        dealRecordMapper.insert(dealRecord);
     }
 
     @Override
     public void deal(DealRecord dealRecord) {
-        ClaimVoucher claimVoucher = claimVoucherDao.select(dealRecord.getClaimVoucherId());
-        Employee employee = employeeDao.select(dealRecord.getDealSn());
+        ClaimVoucher claimVoucher = claimVoucherMapper.selectById(dealRecord.getClaimVoucherId());
+        Employee employee = employeeMapper.select(dealRecord.getDealSn());
         dealRecord.setDealTime(new Date());
-
-        if(dealRecord.getDealWay().equals(Contant.DEAL_PASS)){
-            if(claimVoucher.getTotalAmount()<=Contant.LIMIT_CHECK || employee.getPost().equals(Contant.POST_GM)){
+        if (dealRecord.getDealWay().equals(Contant.DEAL_PASS)) {
+            if (claimVoucher.getTotalAmount() <= Contant.LIMIT_CHECK || employee.getPost().equals(Contant.POST_GM)) {
                 claimVoucher.setStatus(Contant.CLAIMVOUCHER_APPROVED);
-                claimVoucher.setNextDealSn(employeeDao.selectByDepartmentAndPost(null,Contant.POST_CASHIER).get(0).getSn());
+                claimVoucher.setNextDealSn(employeeMapper.selectByDepartmentAndPost(null, Contant.POST_CASHIER).get(0).getSn());
 
                 dealRecord.setDealResult(Contant.CLAIMVOUCHER_APPROVED);
-            }else{
+            } else {
                 claimVoucher.setStatus(Contant.CLAIMVOUCHER_RECHECK);
-                claimVoucher.setNextDealSn(employeeDao.selectByDepartmentAndPost(null,Contant.POST_GM).get(0).getSn());
+                claimVoucher.setNextDealSn(employeeMapper.selectByDepartmentAndPost(null, Contant.POST_GM).get(0).getSn());
 
                 dealRecord.setDealResult(Contant.CLAIMVOUCHER_RECHECK);
             }
-        }else if(dealRecord.getDealWay().equals(Contant.DEAL_BACK)){
+        } else if (dealRecord.getDealWay().equals(Contant.DEAL_BACK)) {
             claimVoucher.setStatus(Contant.CLAIMVOUCHER_BACK);
             claimVoucher.setNextDealSn(claimVoucher.getCreateSn());
 
             dealRecord.setDealResult(Contant.CLAIMVOUCHER_BACK);
-        }else if(dealRecord.getDealWay().equals(Contant.DEAL_REJECT)){
+        } else if (dealRecord.getDealWay().equals(Contant.DEAL_REJECT)) {
             claimVoucher.setStatus(Contant.CLAIMVOUCHER_TERMINATED);
             claimVoucher.setNextDealSn(null);
 
             dealRecord.setDealResult(Contant.CLAIMVOUCHER_TERMINATED);
-        }else if(dealRecord.getDealWay().equals(Contant.DEAL_PAID)){
+        } else if (dealRecord.getDealWay().equals(Contant.DEAL_PAID)) {
             claimVoucher.setStatus(Contant.CLAIMVOUCHER_PAID);
             claimVoucher.setNextDealSn(null);
 
             dealRecord.setDealResult(Contant.CLAIMVOUCHER_PAID);
         }
 
-        claimVoucherDao.update(claimVoucher);
-        dealRecordDao.insert(dealRecord);
+        claimVoucherMapper.update(claimVoucher);
+        dealRecordMapper.insert(dealRecord);
     }
 
 }

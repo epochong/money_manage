@@ -4,8 +4,8 @@ import com.imooc.mm.entity.DealRecord;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-@Repository("dealRecordDao")
-public interface DealRecordDao {
+@Repository
+public interface DealRecordMapper {
     void insert(DealRecord dealRecord);
     List<DealRecord> selectByClaimVoucher(int cvid);
 }

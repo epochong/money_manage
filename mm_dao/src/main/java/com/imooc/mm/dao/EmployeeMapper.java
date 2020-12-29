@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository("employeeDao")
-public interface EmployeeDao {
+@Repository
+public interface EmployeeMapper {
     void insert(Employee employee);
     void update(Employee employee);
     void delete(String sn);

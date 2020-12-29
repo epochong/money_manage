@@ -5,12 +5,17 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository("claimVoucherDao")
-public interface ClaimVoucherDao {
+@Repository
+public interface ClaimVoucherMapper {
     void insert(ClaimVoucher claimVoucher);
+
     void update(ClaimVoucher claimVoucher);
-    void delete(int id);
-    ClaimVoucher select(int id);
-    List<ClaimVoucher> selectByCreateSn(String csn);
-    List<ClaimVoucher> selectByNextDealSn(String ndsn);
+
+    void deleteById(int id);
+
+    ClaimVoucher selectById(int id);
+
+    List <ClaimVoucher> selectByCreateSn(String csn);
+
+    List <ClaimVoucher> selectByNextDealSn(String ndsn);
 }

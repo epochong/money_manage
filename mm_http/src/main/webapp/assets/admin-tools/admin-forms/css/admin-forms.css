@@ -1427,7 +1427,7 @@
   margin-bottom: 20px;
 }
 /*==================================================================
-  Firefox select fix - select arrow hack disabled on FF 30+
+  Firefox selectById fix - selectById arrow hack disabled on FF 30+
 ===================================================================*/
 @-moz-document url-prefix() {
   .admin-form .select:before {

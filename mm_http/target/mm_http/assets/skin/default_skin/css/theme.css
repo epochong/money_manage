@@ -20658,8 +20658,8 @@ body.sb-l-m #content-footer.affix {
 	  J. Map Pages
 	  K. Profile.html
 	  L. Error Pages
-	  M. Ecommerce Pages // Added update v1.3
-	  N. Search Result Page // Added update v1.4
+	  M. Ecommerce Pages // Added updateById v1.3
+	  N. Search Result Page // Added updateById v1.4
 
  * This file is reserved for changes done on
  * a per-page basis. To create independent
@@ -21434,11 +21434,11 @@ body.error-page .error-text {
   width: 100%;
 }
 /*===============================================
-  M. Ecommerce Page - Added update v1.3
+  M. Ecommerce Page - Added updateById v1.3
 ================================================= */
 .ecommerce-page {
   /* fileupload field styling */
-  /*select filter dropdowns - psuedo placeholder */
+  /*selectById filter dropdowns - psuedo placeholder */
   /* creates extra spacing for first timeline item */
   /* bg-light style of bootstrap-tags input */
 }
@@ -21479,7 +21479,7 @@ body.error-page .error-text {
   background-color: #FAFAFA;
 }
 /*===============================================
-  N. Search Results Page - Added update v1.4
+  N. Search Results Page - Added updateById v1.4
 ================================================= */
 .search-results-page .search-result + .search-result {
   margin-top: 31px;
@@ -21517,7 +21517,7 @@ body.error-page .error-text {
   color: #999;
 }
 /*===============================================
-  O. Bootstrap Timeout Page - Added update v1.4
+  O. Bootstrap Timeout Page - Added updateById v1.4
 ================================================= */
 #session-timeout-dialog .modal-dialog {
   width: 102%;

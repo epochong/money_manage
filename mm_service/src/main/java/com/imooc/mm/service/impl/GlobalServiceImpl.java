@@ -1,7 +1,7 @@
 package com.imooc.mm.service.impl;
 
 import com.imooc.mm.service.GlobalService;
-import com.imooc.mm.dao.EmployeeDao;
+import com.imooc.mm.dao.EmployeeMapper;
 import com.imooc.mm.entity.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 @Service("globalService")
 public class GlobalServiceImpl implements GlobalService {
     @Autowired
-    private EmployeeDao employeeDao;
+    private EmployeeMapper employeeMapper;
 
     @Override
     public Employee login(String sn, String password) {
-        Employee employee = employeeDao.select(sn);
+        Employee employee = employeeMapper.select(sn);
         if(employee!=null&&employee.getPassword().equals(password)){
             return  employee;
         }
@@ -22,6 +22,6 @@ public class GlobalServiceImpl implements GlobalService {
 
     @Override
     public void changePassword(Employee employee) {
-        employeeDao.update(employee);
+        employeeMapper.update(employee);
     }
 }

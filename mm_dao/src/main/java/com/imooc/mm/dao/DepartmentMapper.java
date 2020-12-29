@@ -4,8 +4,8 @@ import com.imooc.mm.entity.Department;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-@Repository("departmentDao")
-public interface DepartmentDao {
+@Repository
+public interface DepartmentMapper {
     void insert(Department department);
     void update(Department department);
     void delete(String sn);
